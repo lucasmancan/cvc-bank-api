@@ -14,7 +14,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("v1/accounts")
 @AllArgsConstructor
-
 public class AccountController {
 
     private final AccountService accountService;
