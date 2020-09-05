@@ -71,7 +71,7 @@ Conjunto de ferramentas para contrução de aplicações web extremamente adotad
 
 #### API Docs
 
-A documentação oficial em formato OpenAPI 3.0 pode ser consultada através da implementação do Swagger, disponível em: https://cvc-bank-api.herokuapp.com/api-docs.
+A documentação oficial em formato OpenAPI 3.0 pode ser consultada através da implementação do Swagger, disponível em: https://cvc-bank-api.herokuapp.com/swagger-ui.html#/.
 
 ## Instruções para Devs :)
 
