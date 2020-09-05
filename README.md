@@ -8,6 +8,18 @@ Aplicação para registro e controle de transações financeiras.
 * Exibir transferências realizadas
 * Calcular taxa com base na diferença entre a data de agêndamento e a data efetiva da transferência
 
+### Duvidas e melhorias
+
+```Acima de 40 dias da data de agendamento e valor superior a 100.000 2%```
+
+  O requisito descrito gera algumas inconsistências na aplicação de taxas,
+  pois as transfêrencias acima devem ser acima de 40 dias e com valor superior a 100.000, nesse caso, as trasferências com somente o requisito (acima de 40 dias)  ficam incompreendiadas em todas as condições.
+  
+  Para solucionar o problema, a regra de priorização de calculo para transferências acima de 100.000 deve ser alterada e desvinculada da regra de transferências acima de 40 dias. 
+  
+  No projeto em questão, quando a transfência é acima de 40 dias da data de agendamento e não possui o valor acima de 100.000 um erro é lançado, informando que não existe um possível calculo para essa situação.
+ 
+
 ### Requisitos adicionais aplicados
 
 * Criação de conta - 
