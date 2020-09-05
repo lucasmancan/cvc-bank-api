@@ -16,27 +16,29 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/transfers")
 @AllArgsConstructor
-@ApiOperation(value = "Busca de informações de transferências.", authorizations = {@Authorization(value = "jwtToken")})
 public class TransferController {
 
     private final TransferService transferService;
 
     @PostMapping
-    @ApiOperation(value = "Criação de transferências.")
+    @ApiOperation(value = "Criação de transferências.",
+            authorizations = {@Authorization(value = "jwtToken")})
     @ResponseStatus(HttpStatus.CREATED)
     public TransferDTO create(@RequestBody @Valid CreateTransferDTO createTransferDTO) {
         return transferService.create(createTransferDTO);
     }
 
     @GetMapping("/{id}")
-    @ApiOperation(value = "Busca de transferência por identificação.")
+    @ApiOperation(value = "Busca de transferência por identificação.",
+            authorizations = {@Authorization(value = "jwtToken")})
     public TransferDTO findById(@ApiParam(value = "Transfer identifier", required = true, example = "123"
     ) @PathVariable Long id) {
         return transferService.findById(id);
     }
 
     @GetMapping
-    @ApiOperation(value = "Busca todas as transferências da conta logada.")
+    @ApiOperation(value = "Busca todas as transferências da conta logada.",
+            authorizations = {@Authorization(value = "jwtToken")})
     public List<TransferDTO> findAllCurrentAccountTransfers() {
         return transferService.findAll();
     }
