@@ -1,7 +1,6 @@
 package br.com.cvcbank.services.impl.calculators;
 
 import br.com.cvcbank.exceptions.ValidationException;
-import br.com.cvcbank.services.impl.calculators.Calculator;
 
 import java.math.BigDecimal;
 
@@ -23,8 +22,11 @@ public class FixedPercentageTransferCalculator extends Calculator {
             percentage = 0.06;
         } else if (differenceInDays <= 40) {
             percentage = 0.04;
-        } else {
+        } else if (differenceInDays > 40 && amount.compareTo(BigDecimal.valueOf(100000)) >= 0) {
             percentage = 0.02;
+        } else{
+             // TODO GAP in DOCS, check with project manager
+            throw new ValidationException("Transfer is not in a mapped fee interval");
         }
 
         return BigDecimal.valueOf(percentage).multiply(amount);
