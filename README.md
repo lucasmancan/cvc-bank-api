@@ -11,11 +11,11 @@ Aplicação para registro e controle de transações financeiras.
 ### Requisitos adicionais aplicados
 
 * Criação de conta - 
-Somente usuários cadastrados podem realizar transferências
-* Validação de conta e transferência - 
-Transferências só podem ser realizadas por usuários que possuem saldo compatível, contemplando o valor da transferência e o adicional de taxa aplicada. Transferências não podem ser realizadas para uma mesma conta, ou para uma conta inválida.
+    - Somente usuários cadastrados podem realizar transferências
+* Validação de conta e transferência
+    - Transferências só podem ser realizadas por usuários que possuem saldo compatível, contemplando o valor da transferência e o adicional de taxa aplicada. Transferências não podem ser realizadas para uma mesma conta, ou para uma conta inválida.
 * Controle de saldo das contas - 
-Os saldos das contas devem ser atualizados após cada transferência com a finalidade de informar sempre o saldo atual do portador da conta.
+    - Os saldos das contas devem ser atualizados após cada transferência com a finalidade de informar sempre o saldo atual do portador da conta.
 
 ### Próximas funcionalidades
 
@@ -27,6 +27,13 @@ Os saldos das contas devem ser atualizados após cada transferência com a final
 ### Arquitetura
 
 A Aplicação consiste em uma API com os serviços de transação e conta centralizados, com a finalidade de garantir uma estrutura de validação viável, mas estruturados lógicamente para uma possível separação em serviços destíntos garantindo a escalabilidade característica desse modelo.
+
+#### Fluxo da Aplicação
+
+Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs.
+
+![alt text](https://github.com/lucasmancan/cvc-bank-api/blob/master/cvc-api.png?raw=true)
+
 
 ### Tecnologias Aplicadas
 
