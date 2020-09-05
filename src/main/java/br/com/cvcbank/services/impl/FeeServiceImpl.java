@@ -2,6 +2,7 @@ package br.com.cvcbank.services.impl;
 
 import br.com.cvcbank.entities.Transfer;
 import br.com.cvcbank.services.FeeService;
+import br.com.cvcbank.services.impl.calculators.Calculator;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,24 +13,12 @@ public class FeeServiceImpl implements FeeService {
 
     @Override
     public BigDecimal calculateByTransfer(Transfer transfer) {
-        BigDecimal fee = BigDecimal.ZERO;
 
         long differenceInDays = ChronoUnit.DAYS.between(transfer.getScheduledAt(), transfer.getTransferDate());
 
-        if (differenceInDays == 0) {
-            fee = fee.add(new BigDecimal(3).add((BigDecimal.valueOf(0.03).multiply(transfer.getTransferAmount()))));
-        } else if (differenceInDays <= 10) {
-            fee = fee.add(new BigDecimal(12).multiply(BigDecimal.valueOf(differenceInDays)));
-        } else if (differenceInDays <= 20) {
-            fee = fee.add(BigDecimal.valueOf(0.08).multiply(transfer.getTransferAmount()));
-        } else if (differenceInDays <= 30) {
-            fee = fee.add(BigDecimal.valueOf(0.06).multiply(transfer.getTransferAmount()));
-        } else if (differenceInDays <= 40) {
-            fee = fee.add(BigDecimal.valueOf(0.04).multiply(transfer.getTransferAmount()));
-        } else {
-            fee = fee.add(BigDecimal.valueOf(0.02).multiply(transfer.getTransferAmount()));
-        }
+        Calculator calculator = Calculator.getInstance(differenceInDays);
 
-        return fee;
+        return calculator.calculate(transfer.getTransferAmount());
     }
 }
+
