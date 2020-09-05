@@ -2,8 +2,10 @@ package br.com.cvcbank.configurations.security;
 
 import br.com.cvcbank.configurations.security.filters.JwtAuthenticationFilter;
 import br.com.cvcbank.configurations.security.filters.JwtAuthorizationFilter;
+import br.com.cvcbank.configurations.security.services.AuthWhiteListService;
 import br.com.cvcbank.configurations.security.services.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,52 +25,35 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@AllArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final String[] AUTH_WHITELIST = {
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/auth/**",
-            "/console/**",
-            "/h2-console/**",
-            "/h2-console/*",
-            "/h2-console/*",
-            "/v1/accounts"
-    };
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private JwtService jwtService;
-
-    public SecurityConfiguration() {
-        super(false);
-    }
+    private final AuthWhiteListService authWhiteLIst;
+    private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
+    private final JwtService jwtService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        var authenticationFilter = new JwtAuthenticationFilter(authenticationManager(), jwtService);
+        var authenticationFilter = new JwtAuthenticationFilter(authenticationManager(), jwtService, objectMapper);
         var jwtAuthorizationFilter = new JwtAuthorizationFilter(authenticationManager(), jwtService);
 
         http
                 .authorizeRequests()
-                .antMatchers(AUTH_WHITELIST)
+                .antMatchers(authWhiteLIst.getAll())
                 .permitAll()
                 .anyRequest()
                 .authenticated()
-                .and()
-                .exceptionHandling()
                 .and()
                 .addFilter(authenticationFilter)
                 .addFilter(jwtAuthorizationFilter)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().cors().configurationSource(corsConfigurationSource()).and().csrf().disable();
+                .and()
+                .cors()
+                .configurationSource(corsConfigurationSource())
+                .and().csrf().disable();
     }
 
     @Override

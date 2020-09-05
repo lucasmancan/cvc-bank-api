@@ -24,13 +24,16 @@ public class Transfer {
     @Column(name = "beneficiary_id", nullable = false)
     private Long beneficiaryId;
 
+    @Column(name = "origin_id", nullable = false)
+    private Long originId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiary_id", nullable = false, updatable = false, insertable = false)
     private Account beneficiary;
 
     private BigDecimal transferAmount;
 
-    private LocalDateTime scheduledAt;
+    private LocalDateTime scheduledAt = LocalDateTime.now();
 
     private LocalDateTime transferDate;
 

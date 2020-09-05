@@ -1,6 +1,7 @@
 package br.com.cvcbank.controllers.v1;
 
 import br.com.cvcbank.dtos.AccountDTO;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.entities.AccountType;
 import br.com.cvcbank.exceptions.ValidationException;
 import br.com.cvcbank.services.AccountService;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,32 +44,35 @@ class AccountControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
     }
 
-    public AccountDTO mockValidAccount() {
-        AccountDTO dto = new AccountDTO();
-        dto.setDocument("88741439074");
-        dto.setType(AccountType.individual);
-        dto.setPassword("123456");
-        return dto;
+    private AccountDTO mockAccountDTO() {
+        AccountDTO account = new AccountDTO();
+        account.setPassword("12312321");
+        account.setNumber("112123");
+        account.setDocument("12312312321");
+        account.setType(AccountType.individual);
+        account.setBalance(new BigDecimal(10000));
+        account.setId(1L);
+        account.setUpdatedAt(LocalDateTime.now());
+        return account;
     }
 
     @Test
     @WithMockUser(username = "user", password = "password")
     void shouldCreateNewAccountWithValidInfo() throws Exception {
 
-        var dto = mockValidAccount();
+        var createdAccount = new CreateAccountDTO();
+        createdAccount.setDocument("88741439074");
+        createdAccount.setType(AccountType.individual);
+        createdAccount.setPassword("123456");
+        createdAccount.setInitialBalance(new BigDecimal(1000));
 
-        var createdAccount = new AccountDTO();
-        createdAccount.setId(1L);
-        createdAccount.setDocument(dto.getDocument());
-        createdAccount.setType(dto.getType());
-        createdAccount.setNumber("12323");
-        createdAccount.setUpdatedAt(LocalDateTime.now());
+        var dto = mockAccountDTO();
 
-        when(accountService.create(any(AccountDTO.class))).thenReturn(createdAccount);
+        when(accountService.create(any(CreateAccountDTO.class))).thenReturn(mockAccountDTO());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/accounts")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(dto))).andDo(print())
+                .content(objectMapper.writeValueAsString(createdAccount))).andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.document").value(dto.getDocument()))
                 .andExpect(jsonPath("$.id").isNotEmpty())
@@ -79,11 +84,12 @@ class AccountControllerTest {
     @Test
     @WithMockUser(username = "user", password = "password")
     void shouldCreateNewAccountWithValidCNPJInfo() throws Exception {
-        AccountDTO dto = new AccountDTO();
+        CreateAccountDTO dto = new CreateAccountDTO();
 
         dto.setDocument("191.704.39/0001-90");
         dto.setType(AccountType.legal);
         dto.setPassword("123456");
+        dto.setInitialBalance(new BigDecimal(1000));
 
         var createdAccount = new AccountDTO();
         createdAccount.setId(1L);
@@ -92,7 +98,7 @@ class AccountControllerTest {
         createdAccount.setNumber("12323");
         createdAccount.setUpdatedAt(LocalDateTime.now());
 
-        when(accountService.create(any(AccountDTO.class))).thenReturn(createdAccount);
+        when(accountService.create(any(CreateAccountDTO.class))).thenReturn(createdAccount);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/accounts")
                 .contentType("application/json")
@@ -113,7 +119,7 @@ class AccountControllerTest {
         dto.setType(AccountType.individual);
         dto.setPassword("123456");
 
-        when(accountService.create(any(AccountDTO.class))).thenThrow(ValidationException.class);
+        when(accountService.create(any(CreateAccountDTO.class))).thenThrow(ValidationException.class);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/accounts")
                 .contentType("application/json")

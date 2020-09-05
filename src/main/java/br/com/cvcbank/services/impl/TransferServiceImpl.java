@@ -1,16 +1,19 @@
 package br.com.cvcbank.services.impl;
 
+import br.com.cvcbank.configurations.security.utils.AppSecurityContext;
 import br.com.cvcbank.converters.TransferConverter;
 import br.com.cvcbank.dtos.CreateTransferDTO;
 import br.com.cvcbank.dtos.TransferDTO;
 import br.com.cvcbank.exceptions.NotFoundException;
 import br.com.cvcbank.repositories.TransferRepository;
+import br.com.cvcbank.services.BalanceService;
 import br.com.cvcbank.services.FeeService;
 import br.com.cvcbank.services.TransferService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,16 +24,23 @@ public class TransferServiceImpl implements TransferService {
     private final FeeService feeService;
     private final TransferRepository transferRepository;
     private final TransferConverter transferConverter;
+    private final AppSecurityContext appSecurityContext;
+    private final BalanceService balanceService;
 
     @Override
     public TransferDTO create(CreateTransferDTO createTransferDTO) {
         var transfer = transferConverter.dtoToEntity(createTransferDTO);
 
-        final BigDecimal feeValue = feeService.calculateByTransfer(transfer);
+        transfer.setScheduledAt(LocalDateTime.now());
 
+        BigDecimal feeValue = feeService.calculateByTransfer(transfer);
+        transfer.setOriginId(appSecurityContext.getCurrentAccountId());
         transfer.setFee(feeValue);
         transfer.setAmount(transfer.getTransferAmount().add(transfer.getFee()));
+
         transfer = transferRepository.save(transfer);
+
+        balanceService.updateBalance(transfer);
 
         return transferConverter.entityToDTO(transfer);
     }
@@ -44,6 +54,7 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     public List<TransferDTO> findAll() {
-        return transferRepository.findAll().stream().map(transferConverter::entityToDTO).collect(Collectors.toList());
+        return transferRepository.findAllByOriginId(appSecurityContext.getCurrentAccountId())
+                .stream().map(transferConverter::entityToDTO).collect(Collectors.toList());
     }
 }

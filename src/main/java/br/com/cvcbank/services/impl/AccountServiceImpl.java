@@ -1,9 +1,10 @@
 package br.com.cvcbank.services.impl;
 
 import br.com.cvcbank.configurations.security.exceptions.AuthenticationNotFoundException;
-import br.com.cvcbank.configurations.security.utils.ContextUtils;
+import br.com.cvcbank.configurations.security.utils.AppSecurityContext;
 import br.com.cvcbank.converters.AccountConverter;
 import br.com.cvcbank.dtos.AccountDTO;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.exceptions.NotFoundException;
 import br.com.cvcbank.repositories.AccountRepository;
 import br.com.cvcbank.services.AccountService;
@@ -21,6 +22,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountConverter accountConverter;
     private final PasswordEncoderService passwordEncoderService;
+    private final AppSecurityContext appSecurityContext;
 
     @Override
     public AccountDTO findById(Long id) {
@@ -30,7 +32,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDTO create(AccountDTO accountDTO) {
+    public AccountDTO create(CreateAccountDTO accountDTO) {
         var entity = accountConverter.dtoToEntity(accountDTO);
         accountValidationService.validate(entity);
         entity.setNumber(generateAccountNumber());
@@ -45,7 +47,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDTO findActiveAccount() {
-        return accountRepository.findById(ContextUtils.currentAccountId())
+        return accountRepository.findById(appSecurityContext.getCurrentAccountId())
                 .map(accountConverter::entityToDTO)
                 .orElseThrow(AuthenticationNotFoundException::new);
     }

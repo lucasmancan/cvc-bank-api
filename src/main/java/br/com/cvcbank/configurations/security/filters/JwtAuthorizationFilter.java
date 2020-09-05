@@ -3,7 +3,6 @@ package br.com.cvcbank.configurations.security.filters;
 import br.com.cvcbank.configurations.security.services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +19,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     public static final String TOKEN_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
 
-    private final JwtService jwtServiceImpl;
+    private final JwtService jwtService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtService jwtServiceImpl) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager,
+                                  JwtService jwtService) {
         super(authenticationManager);
-        this.jwtServiceImpl = jwtServiceImpl;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -41,17 +41,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(final String token) {
-
-        Jws<Claims> parsedToken = null;
-
-        try {
-            parsedToken = jwtServiceImpl.decode(token);
-        } catch (JwtException e) {
-            return null;
-        }
-
-        final Integer accountId = Integer.valueOf(parsedToken.getBody().get("accountId").toString());
-
+        Jws<Claims> parsedToken = jwtService.decode(token);
+        long accountId = Long.parseLong(parsedToken.getBody().get("accountId").toString());
         return new UsernamePasswordAuthenticationToken(accountId, null, Collections.emptyList());
     }
 }

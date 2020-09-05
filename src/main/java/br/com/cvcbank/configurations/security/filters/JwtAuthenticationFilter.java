@@ -4,15 +4,11 @@ import br.com.cvcbank.configurations.security.models.Credentials;
 import br.com.cvcbank.configurations.security.models.UserDetailsImpl;
 import br.com.cvcbank.configurations.security.services.JwtService;
 import br.com.cvcbank.entities.Account;
+import br.com.cvcbank.exceptions.ValidationException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -22,49 +18,42 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    public static final String AUTH_LOGIN_URL = "/auth";
-
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtServiceImpl;
+    private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtServiceImpl) {
-        this.jwtServiceImpl = jwtServiceImpl;
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
+                                   JwtService jwtService, ObjectMapper objectMapper) {
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
-        setFilterProcessesUrl(AUTH_LOGIN_URL);
+        this.objectMapper = objectMapper;
+//        setFilterProcessesUrl(AUTH_LOGIN_URL);
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request,
+                                                HttpServletResponse response) {
+        Credentials credentials;
+
         try {
-            Credentials credentials = new ObjectMapper().readValue(request.getInputStream(), Credentials.class);
-
-            try {
-                final var token = new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword(), Collections.emptyList());
-
-                return this.authenticationManager.authenticate(token);
-            } catch (BadCredentialsException usernameNotFoundException) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Credenciais inválidas");
-                return null;
-            }
-
+            credentials = objectMapper.readValue(request.getInputStream(), Credentials.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ValidationException("Invalid request.");
         }
-    }
 
+        var token = new UsernamePasswordAuthenticationToken(credentials.getDocument(),
+                credentials.getPassword(),
+                Collections.emptyList());
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return this.authenticationManager.authenticate(token);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain, Authentication authentication) {
 
-        final Account user = ((UserDetailsImpl) authentication.getPrincipal()).getAccount();
-        final String token = jwtServiceImpl.generate(user);
-
+        Account account = ((UserDetailsImpl) authentication.getPrincipal()).getAccount();
+        String token = jwtService.generate(account);
         response.addHeader("Authorization", String.format("Bearer %s", token));
         response.addHeader("access-control-expose-headers", "Authorization");
     }

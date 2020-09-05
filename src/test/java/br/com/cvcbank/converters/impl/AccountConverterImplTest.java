@@ -1,6 +1,7 @@
 package br.com.cvcbank.converters.impl;
 
 import br.com.cvcbank.dtos.AccountDTO;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.entities.Account;
 import br.com.cvcbank.entities.AccountType;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,14 @@ class AccountConverterImplTest {
         return account;
     }
 
+    private CreateAccountDTO mockCreateAccountDTO() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setPassword("12312321");
+        account.setDocument("12312312321");
+        account.setType(AccountType.individual);
+        return account;
+    }
+
     @Test
     void shouldConvertDtoToEntity() {
         var dto = mockAccountDTO();
@@ -57,6 +66,16 @@ class AccountConverterImplTest {
         assertEquals(account.getType(), dto.getType());
         assertEquals(account.getUpdatedAt(), dto.getUpdatedAt());
         assertEquals(account.getNumber(), dto.getNumber());
+    }
+
+    @Test
+    void shouldConvertCreateAccountDtoToEntity() {
+        var dto = mockCreateAccountDTO();
+        Account account = accountConverter.dtoToEntity(dto);
+
+        assertEquals(account.getPassword(), dto.getPassword());
+        assertEquals(account.getDocument(), dto.getDocument());
+        assertEquals(account.getType(), dto.getType());
     }
 
     @Test

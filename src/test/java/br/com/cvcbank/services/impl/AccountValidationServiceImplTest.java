@@ -3,15 +3,20 @@ package br.com.cvcbank.services.impl;
 import br.com.cvcbank.entities.Account;
 import br.com.cvcbank.entities.AccountType;
 import br.com.cvcbank.exceptions.ValidationException;
+import br.com.cvcbank.repositories.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ContextConfiguration(classes = AccountValidationServiceImpl.class)
@@ -20,6 +25,9 @@ class AccountValidationServiceImplTest {
     @Autowired
     AccountValidationServiceImpl accountValidationService;
 
+    @MockBean
+    AccountRepository accountRepository;
+
     @Test
     void shouldDoNothingDealingWithValidIndividualAccount() {
         accountValidationService.validate(mockValidIndividualAccount());
@@ -27,11 +35,14 @@ class AccountValidationServiceImplTest {
 
     @Test
     void shouldDoNothingDealingWithValidLegalAccount() {
+        when(accountRepository.findByDocument(any())).thenReturn(Optional.empty());
         accountValidationService.validate(mockValidLegalAccount());
     }
 
     @Test
     void shouldThrowExceptionDealingWithInvalidLegalAccount() {
+        when(accountRepository.findByDocument(any())).thenReturn(Optional.empty());
+
         Exception exception = assertThrows(ValidationException.class, () -> {
             accountValidationService.validate(mockInvalidLegalAccount());
         });
@@ -43,6 +54,8 @@ class AccountValidationServiceImplTest {
 
     @Test
     void shouldThrowExceptionDealingWithInvalidIndividualAccount() {
+        when(accountRepository.findByDocument(any())).thenReturn(Optional.empty());
+
         Exception exception = assertThrows(ValidationException.class, () -> {
             accountValidationService.validate(mockInvalidIndividualAccount());
         });
@@ -53,7 +66,22 @@ class AccountValidationServiceImplTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenAccountAlreadyExists() {
+        when(accountRepository.findByDocument(any())).thenReturn(Optional.of(new Account()));
+
+        Exception exception = assertThrows(ValidationException.class, () -> {
+            accountValidationService.validate(mockInvalidIPasswordAccount());
+        });
+
+        String expectedMessage = "Account already exists.";
+        String actualMessage = exception.getMessage();
+        assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
     void shouldThrowExceptionDealingWithInvalidPasswordFormat() {
+        when(accountRepository.findByDocument(any())).thenReturn(Optional.empty());
+
         Exception exception = assertThrows(ValidationException.class, () -> {
             accountValidationService.validate(mockInvalidIPasswordAccount());
         });

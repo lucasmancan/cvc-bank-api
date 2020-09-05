@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("CreateTransfer")
+@ApiModel("TransferSummary")
 public class CreateTransferDTO implements Serializable {
 
     @NotNull(message = "Transfer amount is required")

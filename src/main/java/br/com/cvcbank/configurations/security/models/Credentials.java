@@ -10,6 +10,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Credentials implements Serializable {
-    private String email;
+    private String document;
     private String password;
+
+    public String getDocument() {
+        if (document != null) {
+            return document.trim().replaceAll("\\D", "");
+        }
+        return document;
+    }
 }

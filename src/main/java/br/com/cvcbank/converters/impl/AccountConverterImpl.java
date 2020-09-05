@@ -2,6 +2,7 @@ package br.com.cvcbank.converters.impl;
 
 import br.com.cvcbank.converters.AccountConverter;
 import br.com.cvcbank.dtos.AccountDTO;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.entities.Account;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,16 @@ public class AccountConverterImpl implements AccountConverter {
                 .updatedAt(accountDTO.getUpdatedAt())
                 .password(accountDTO.getPassword())
                 .id(accountDTO.getId())
+                .build();
+    }
+
+    @Override
+    public Account dtoToEntity(CreateAccountDTO accountDTO) {
+        return Account.builder()
+                .document(accountDTO.getDocument())
+                .type(accountDTO.getType())
+                .password(accountDTO.getPassword())
+                .balance(accountDTO.getInitialBalance())
                 .build();
     }
 
