@@ -4,16 +4,16 @@ Aplicação para registro e controle de transações financeiras.
 
 ## Requisitos do projeto
 
-* Criar transações
-* Exibir transferências realizadas
-* Calcular taxa com base na diferença entre a data de agêndamento e a data efetiva da transferência
+* Criar transações.
+* Exibir transferências realizadas.
+* Calcular taxa com base na diferença entre a data de agêndamento e a data efetiva da transferência.
 
 ### Duvidas e melhorias
 
 ```Acima de 40 dias da data de agendamento e valor superior a 100.000 2%```
 
   O requisito descrito gera algumas inconsistências na aplicação de taxas,
-  pois as transfêrencias devem ser acima de 40 dias e com valor superior a 100.000, nesse caso, as trasferências com somente o requisito (acima de 40 dias)  ficam incompreendiadas em todas as condições.
+  pois as transfêrencias devem ser acima de 40 dias e com valor superior a 100.000, nesse caso as trasferências com somente o requisito "acima de 40 dias" ficam incompreendiadas em todas as condições.
   
   Para solucionar o problema, a regra de priorização de calculo para transferências acima de 100.000 deve ser alterada e desvinculada da regra de transferências acima de 40 dias. 
   
@@ -38,11 +38,11 @@ Aplicação para registro e controle de transações financeiras.
 
 ### Arquitetura
 
-A Aplicação consiste em uma API com os serviços de transação e conta centralizados, com a finalidade de garantir uma estrutura de validação viável, mas estruturados lógicamente para uma possível separação em serviços destíntos garantindo a escalabilidade característica desse modelo.
+A Aplicação consiste em uma API REST com os serviços de transação e conta centralizados, com a finalidade de garantir uma estrutura de validação viável, mas estruturados lógicamente para uma possível separação em serviços destíntos.
 
 #### Fluxo da Aplicação
 
-Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs.
+Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs. Estando autenticado, não é preciso informar a conta de origem para a realização de uma tranferência, só é necessário informar a identificação do beneficiário.
 
 ![alt text](https://github.com/lucasmancan/cvc-bank-api/blob/master/cvc-api.png?raw=true)
 
