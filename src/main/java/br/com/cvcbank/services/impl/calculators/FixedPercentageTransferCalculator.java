@@ -24,8 +24,8 @@ public class FixedPercentageTransferCalculator extends Calculator {
             percentage = 0.04;
         } else if (differenceInDays > 40 && amount.compareTo(BigDecimal.valueOf(100000)) >= 0) {
             percentage = 0.02;
-        } else{
-             // TODO GAP in DOCS, check with project manager
+        } else {
+            // TODO GAP in DOCS, check with project manager
             throw new ValidationException("Transfer is not in a mapped fee interval");
         }
 

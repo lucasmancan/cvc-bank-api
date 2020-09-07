@@ -4,7 +4,7 @@ import br.com.caelum.stella.validation.CNPJValidator;
 import br.com.caelum.stella.validation.CPFValidator;
 import br.com.caelum.stella.validation.InvalidStateException;
 import br.com.caelum.stella.validation.Validator;
-import br.com.cvcbank.entities.Account;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.entities.AccountType;
 import br.com.cvcbank.exceptions.ValidationException;
 import br.com.cvcbank.repositories.AccountRepository;
@@ -20,7 +20,7 @@ public class AccountValidationServiceImpl implements AccountValidationService {
     private final AccountRepository accountRepository;
 
     @Override
-    public void validate(Account account) {
+    public void validate(CreateAccountDTO account) {
         var cleanDocument = StringUtils.trimToNull(account.getDocument());
 
         if (accountRepository.findByDocument(account.getDocument()).isPresent()) {

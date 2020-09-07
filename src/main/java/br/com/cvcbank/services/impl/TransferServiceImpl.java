@@ -2,8 +2,10 @@ package br.com.cvcbank.services.impl;
 
 import br.com.cvcbank.configurations.security.utils.AppSecurityContext;
 import br.com.cvcbank.converters.TransferConverter;
+import br.com.cvcbank.dtos.BalanceUpdate;
 import br.com.cvcbank.dtos.CreateTransferDTO;
 import br.com.cvcbank.dtos.TransferDTO;
+import br.com.cvcbank.dtos.TransferSummary;
 import br.com.cvcbank.exceptions.NotFoundException;
 import br.com.cvcbank.repositories.TransferRepository;
 import br.com.cvcbank.services.BalanceService;
@@ -33,14 +35,22 @@ public class TransferServiceImpl implements TransferService {
 
         transfer.setScheduledAt(LocalDateTime.now());
 
-        BigDecimal feeValue = feeService.calculateByTransfer(transfer);
+        BigDecimal feeValue = feeService.calculateByTransfer(
+                new TransferSummary(transfer.getTransferAmount(),
+                        transfer.getScheduledAt(),
+                        transfer.getTransferDate()));
+
         transfer.setOriginId(appSecurityContext.getCurrentAccountId());
         transfer.setFee(feeValue);
         transfer.setAmount(transfer.getTransferAmount().add(transfer.getFee()));
 
         transfer = transferRepository.save(transfer);
 
-        balanceService.updateBalance(transfer);
+        balanceService.updateBalance(
+                new BalanceUpdate(transfer.getBeneficiaryId(),
+                        transfer.getOriginId(),
+                        transfer.getTransferAmount(),
+                        transfer.getAmount()));
 
         return transferConverter.entityToDTO(transfer);
     }

@@ -1,5 +1,6 @@
 package br.com.cvcbank.services.impl;
 
+import br.com.cvcbank.dtos.CreateAccountDTO;
 import br.com.cvcbank.entities.Account;
 import br.com.cvcbank.entities.AccountType;
 import br.com.cvcbank.exceptions.ValidationException;
@@ -91,57 +92,47 @@ class AccountValidationServiceImplTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
 
-    private Account mockInvalidIPasswordAccount() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(new BigDecimal(1000));
+    private CreateAccountDTO mockInvalidIPasswordAccount() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setInitialBalance(new BigDecimal(1000));
         account.setType(AccountType.legal);
         account.setDocument("69198011000124");
-        account.setNumber("123212");
         account.setPassword("123");
         return account;
     }
 
-    private Account mockValidIndividualAccount() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(new BigDecimal(1000));
+    private CreateAccountDTO mockValidIndividualAccount() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setInitialBalance(new BigDecimal(1000));
         account.setType(AccountType.individual);
         account.setDocument("47434977019");
-        account.setNumber("123212");
         account.setPassword("123123");
         return account;
     }
 
-    private Account mockValidLegalAccount() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(new BigDecimal(1000));
+    private CreateAccountDTO mockValidLegalAccount() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setInitialBalance(new BigDecimal(1000));
         account.setType(AccountType.legal);
         account.setDocument("69198011000124");
-        account.setNumber("123212");
         account.setPassword("123123");
         return account;
     }
 
-    private Account mockInvalidLegalAccount() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(new BigDecimal(1000));
+    private CreateAccountDTO mockInvalidLegalAccount() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setInitialBalance(new BigDecimal(1000));
         account.setType(AccountType.legal);
         account.setDocument("69198011012312");
-        account.setNumber("123212");
         account.setPassword("123123");
         return account;
     }
 
-    private Account mockInvalidIndividualAccount() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(new BigDecimal(1000));
+    private CreateAccountDTO mockInvalidIndividualAccount() {
+        CreateAccountDTO account = new CreateAccountDTO();
+        account.setInitialBalance(new BigDecimal(1000));
         account.setType(AccountType.individual);
         account.setDocument("12312312");
-        account.setNumber("123212");
         account.setPassword("123123");
         return account;
     }

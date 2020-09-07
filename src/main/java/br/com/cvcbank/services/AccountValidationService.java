@@ -1,7 +1,7 @@
 package br.com.cvcbank.services;
 
-import br.com.cvcbank.entities.Account;
+import br.com.cvcbank.dtos.CreateAccountDTO;
 
 public interface AccountValidationService {
-    void validate(Account account);
+    void validate(CreateAccountDTO dto);
 }

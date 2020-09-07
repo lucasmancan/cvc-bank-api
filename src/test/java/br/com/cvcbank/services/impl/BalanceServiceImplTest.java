@@ -1,9 +1,9 @@
 package br.com.cvcbank.services.impl;
 
 import br.com.cvcbank.configurations.security.utils.AppSecurityContext;
+import br.com.cvcbank.dtos.BalanceUpdate;
 import br.com.cvcbank.entities.Account;
 import br.com.cvcbank.entities.AccountType;
-import br.com.cvcbank.entities.Transfer;
 import br.com.cvcbank.exceptions.ValidationException;
 import br.com.cvcbank.repositories.AccountRepository;
 import org.junit.jupiter.api.Test;
@@ -47,16 +47,12 @@ class BalanceServiceImplTest {
         return account;
     }
 
-    public Transfer mockTransfer() {
-        Transfer transfer = new Transfer();
-        transfer.setId(1L);
-        transfer.setAmount(new BigDecimal(1000));
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setFee(new BigDecimal(1000));
-        transfer.setBeneficiaryId(2L);
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now());
-        return transfer;
+    public BalanceUpdate mockValidBalanceTransfer() {
+        return new BalanceUpdate(2L, 1L, new BigDecimal("1000"), new BigDecimal("1100"));
+    }
+
+    public BalanceUpdate mockInvalidBalanceTransferToTheSameAccount() {
+        return new BalanceUpdate(1L, 1L, new BigDecimal("1000"), new BigDecimal("1100"));
     }
 
     @Test
@@ -65,13 +61,12 @@ class BalanceServiceImplTest {
         when(accountRepository.findById(any())).thenReturn(Optional.of(mockAccount()));
         when(appSecurityContext.getCurrentAccountId()).thenReturn(1L);
 
-        transferValidatonService.updateBalance(mockTransfer());
+        transferValidatonService.updateBalance(mockValidBalanceTransfer());
     }
 
     @Test
     void shouldThrowExceptionWhenTryingToMakeTransferToTheSameAccount() {
-        var transfer = mockTransfer();
-        transfer.setBeneficiaryId(1L);
+        var transfer = mockInvalidBalanceTransferToTheSameAccount();
 
         when(accountRepository.findById(any())).thenReturn(Optional.of(mockAccount()));
         when(appSecurityContext.getCurrentAccountId()).thenReturn(1L);
@@ -94,7 +89,7 @@ class BalanceServiceImplTest {
         when(appSecurityContext.getCurrentAccountId()).thenReturn(1L);
 
         Exception exception = assertThrows(ValidationException.class, () -> {
-            transferValidatonService.updateBalance(mockTransfer());
+            transferValidatonService.updateBalance(mockValidBalanceTransfer());
         });
 
         String expectedMessage = "Account does not have enough balance to complete the transaction";

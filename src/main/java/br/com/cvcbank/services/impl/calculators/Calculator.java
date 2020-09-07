@@ -3,8 +3,6 @@ package br.com.cvcbank.services.impl.calculators;
 import java.math.BigDecimal;
 
 public abstract class Calculator {
-    public abstract BigDecimal calculate(BigDecimal amount);
-
     public static Calculator getInstance(long differenceInDays) {
         if (differenceInDays == 0) {
             return new SameDayCalculator();
@@ -14,4 +12,6 @@ public abstract class Calculator {
             return new FixedPercentageTransferCalculator(differenceInDays);
         }
     }
+
+    public abstract BigDecimal calculate(BigDecimal amount);
 }

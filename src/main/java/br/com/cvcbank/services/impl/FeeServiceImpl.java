@@ -1,6 +1,6 @@
 package br.com.cvcbank.services.impl;
 
-import br.com.cvcbank.entities.Transfer;
+import br.com.cvcbank.dtos.TransferSummary;
 import br.com.cvcbank.services.FeeService;
 import br.com.cvcbank.services.impl.calculators.Calculator;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 public class FeeServiceImpl implements FeeService {
 
     @Override
-    public BigDecimal calculateByTransfer(Transfer transfer) {
+    public BigDecimal calculateByTransfer(TransferSummary transfer) {
 
         long differenceInDays = ChronoUnit.DAYS.between(transfer.getScheduledAt(), transfer.getTransferDate());
 

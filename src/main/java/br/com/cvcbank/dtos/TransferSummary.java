@@ -1,16 +1,15 @@
 package br.com.cvcbank.dtos;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public final class BalanceUpdate {
-    private final Long beneficiaryId;
-    private final Long originId;
+public final class TransferSummary {
     private final BigDecimal transferAmount;
-    private final BigDecimal amount;
+    private final LocalDateTime scheduledAt;
+    private final LocalDateTime transferDate;
 }

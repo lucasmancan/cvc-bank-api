@@ -33,8 +33,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDTO create(CreateAccountDTO accountDTO) {
+        accountValidationService.validate(accountDTO);
+
         var entity = accountConverter.dtoToEntity(accountDTO);
-        accountValidationService.validate(entity);
         entity.setNumber(generateAccountNumber());
         entity.setPassword(passwordEncoderService.encode(entity.getPassword()));
         return accountConverter.entityToDTO(accountRepository.save(entity));

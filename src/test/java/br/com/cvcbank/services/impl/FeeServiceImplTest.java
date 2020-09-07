@@ -1,6 +1,6 @@
 package br.com.cvcbank.services.impl;
 
-import br.com.cvcbank.entities.Transfer;
+import br.com.cvcbank.dtos.TransferSummary;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +73,7 @@ class FeeServiceImplTest {
 
     @Test
     void testTransferForTheNext41DaysAndValueGreaterThan100000() {
-        var transfer = mockTransferForTheNext41Days();
-        transfer.setTransferAmount(new BigDecimal("100000"));
+        var transfer = mockTransferGreaterThan100000AndForTheNext41Days();
 
         BigDecimal fee = feeService.calculateByTransfer(transfer);
         BigDecimal expectedValue = new BigDecimal("0.02").multiply(transfer.getTransferAmount());
@@ -98,8 +97,8 @@ class FeeServiceImplTest {
      */
     @Test
     void testTransferGreaterThan100000InTheSameDay() {
-        var transfer = mockTransferGreaterThan100000();
-        transfer.setTransferDate(LocalDateTime.now());
+
+        var transfer = new TransferSummary(new BigDecimal(100000), LocalDateTime.now(), LocalDateTime.now());
 
         BigDecimal fee = feeService.calculateByTransfer(transfer);
         BigDecimal expectedValue = new BigDecimal("0.03").multiply(transfer.getTransferAmount()).add(new BigDecimal(3));
@@ -112,12 +111,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockSameDayTransfer() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now());
-        return transfer;
+    public TransferSummary mockSameDayTransfer() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now());
     }
 
     /**
@@ -125,12 +120,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferForTheNext5Days() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(5));
-        return transfer;
+    public TransferSummary mockTransferForTheNext5Days() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now().plusDays(5));
     }
 
     /**
@@ -138,12 +129,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferForTheNext15Days() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(15));
-        return transfer;
+    public TransferSummary mockTransferForTheNext15Days() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now().plusDays(15));
     }
 
     /**
@@ -151,12 +138,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferForTheNext25Days() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(25));
-        return transfer;
+    public TransferSummary mockTransferForTheNext25Days() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now().plusDays(25));
     }
 
     /**
@@ -164,12 +147,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferForTheNext35Days() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(35));
-        return transfer;
+    public TransferSummary mockTransferForTheNext35Days() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now().plusDays(35));
     }
 
     /**
@@ -177,12 +156,8 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferForTheNext41Days() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(1000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(41));
-        return transfer;
+    public TransferSummary mockTransferForTheNext41Days() {
+        return new TransferSummary(new BigDecimal(1000), LocalDateTime.now(), LocalDateTime.now().plusDays(41));
     }
 
     /**
@@ -190,11 +165,7 @@ class FeeServiceImplTest {
      *
      * @return
      */
-    public Transfer mockTransferGreaterThan100000() {
-        Transfer transfer = new Transfer();
-        transfer.setTransferAmount(new BigDecimal(100000));
-        transfer.setScheduledAt(LocalDateTime.now());
-        transfer.setTransferDate(LocalDateTime.now().plusDays(41));
-        return transfer;
+    public TransferSummary mockTransferGreaterThan100000AndForTheNext41Days() {
+        return new TransferSummary(new BigDecimal(100000), LocalDateTime.now(), LocalDateTime.now().plusDays(41));
     }
 }

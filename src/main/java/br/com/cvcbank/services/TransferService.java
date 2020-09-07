@@ -6,11 +6,11 @@ import br.com.cvcbank.dtos.TransferDTO;
 import java.util.List;
 
 
-
 public interface TransferService {
 
     /**
      * Create a Transfer and apply validations
+     *
      * @param createTransferDTO
      * @return
      */
