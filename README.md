@@ -49,7 +49,7 @@ A documentação oficial em formato Swagger 2.0 pode ser consultada através da 
 Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs. Estando autenticado, não é preciso informar a conta de origem para a realização de uma tranferência, só é necessário informar a identificação do beneficiário e o token gerado no processo de login (Bearer Token).
 
 * Criação de conta 
-- - POST /v1/accounts
+- - POST /v1/accounts (Informar saldo inicial da conta, considerando isso como uma portabilidade ou transferência para a conta a ser criada)
 
 * Geração de token de acesso aos recursos protegidos 
 - - POST /login
