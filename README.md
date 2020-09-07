@@ -38,11 +38,35 @@ Aplicação para registro e controle de transações financeiras.
 
 ### Arquitetura
 
-A Aplicação consiste em uma API REST com os serviços de transação e conta centralizados, com a finalidade de garantir uma estrutura de validação viável, mas estruturados lógicamente para uma possível separação em serviços destíntos.
+A Aplicação consiste em uma API Restful com os serviços de transação e conta centralizados, com a finalidade de garantir uma estrutura de validação viável, mas estruturados lógicamente para uma possível separação em serviços distintos.
+
+#### API Docs
+
+A documentação oficial em formato Swagger 2.0 pode ser consultada através da implementação do Swagger-ui, disponível em: https://cvc-bank-api.herokuapp.com/swagger-ui.html#/.
 
 #### Fluxo da Aplicação
 
-Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs. Estando autenticado, não é preciso informar a conta de origem para a realização de uma tranferência, só é necessário informar a identificação do beneficiário.
+Para acessar os recursos de conta e transferências é necessário realizar o processo de autenticação descrito no tópico API Docs. Estando autenticado, não é preciso informar a conta de origem para a realização de uma tranferência, só é necessário informar a identificação do beneficiário e o token gerado no processo de login (Bearer Token).
+
+* Criação de conta 
+- - POST /v1/accounts
+
+* Geração de token de acesso aos recursos protegidos 
+- - POST /login
+
+##### Recursos protegidos
+
+* Visualização de saldo da conta logada.
+- - GET /v1/accounts
+
+* Criação de uma transferência.
+- - POST /v1/transfers
+
+* Busca de uma transferência.
+- - GET /v1/transfers/{id}
+
+* Busca de todas as transferêcias da conta logada.
+- - GET /v1/transfers
 
 ![alt text](https://github.com/lucasmancan/cvc-bank-api/blob/master/cvc-api.png?raw=true)
 
@@ -67,11 +91,7 @@ Ultima versão LTS do Java lançada, garantindo segurança e performance para a 
 
 #### Spring Boot
 
-Conjunto de ferramentas para contrução de aplicações web extremamente adotados do merdado, com uma variedade de ferramentas de teste, cache e comunicação. Facilitando a manutenção da plataforma garantindo novas funcionalidades de forma simples através da utilização do ecossistema Spring. 
-
-#### API Docs
-
-A documentação oficial em formato OpenAPI 3.0 pode ser consultada através da implementação do Swagger, disponível em: https://cvc-bank-api.herokuapp.com/swagger-ui.html#/.
+Conjunto de ferramentas para contrução de aplicações web extremamente adotados no mercado, com uma variedade de ferramentas de teste, cache e comunicação. Facilitando a manutenção da plataforma garantindo novas funcionalidades de forma simples através da utilização do ecossistema Spring. 
 
 ## Instruções para Devs :)
 
